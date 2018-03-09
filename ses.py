@@ -41,4 +41,4 @@ def send_email_default(SUBJECT, BODY_TEXT):
 
 
 if __name__ == "__main__":
-    send_email_default('Test Email', 'This is a test\nThanks,\nAWS Security')
+    send_email_default('Test Email', 'This is a test\n\n\nThanks,\nERP Security')

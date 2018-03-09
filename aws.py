@@ -1,5 +1,4 @@
 import boto3
-import aws
 
 
 def get_regions(aws_region='us-east-1'):
