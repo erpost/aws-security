@@ -1,11 +1,16 @@
+from logging.handlers import RotatingFileHandler
+
 import boto3
 import os
 import aws
 import logging
-from logging.handlers import RotatingFileHandler
+import ses
 
-path = os.path.join(os.path.dirname(__file__), 'logs/')
-logfile = os.path.join(path, 'cloud-monitor.log')
+
+# Re-enabled CloudTrail if it has been turned off
+
+path = os.path.expanduser('~/python-logs')
+logfile = os.path.expanduser('~/python-logs/security.log')
 
 if os.path.isdir(path):
     pass
@@ -20,7 +25,7 @@ handler.setFormatter(log_formatter)
 logger.addHandler(handler)
 
 cloudtrails_dict = {}
-sendemail = False
+alert = False
 
 for aws_region in aws.get_regions():
 
@@ -32,12 +37,12 @@ for aws_region in aws.get_regions():
             status = client.get_trail_status(Name=cloudtrail['TrailARN'])
             if status['IsLogging'] is False:
                 response = client.start_logging(Name=cloudtrail['TrailARN'])
-                sendemail = True
+                alert = True
                 logger.warning('CloudTrail disabled: {}'.format(cloudtrail['TrailARN']))
 
-if sendemail:
+if alert:
     subject = 'CloudTrail Disabled!'
     body_text = 'CloudTrail(s) were disabled and attempted to be re-enabled.  See logs for additional information.'
-    aws.send_email(subject, body_text)
+    ses.send_email_default(subject, body_text)
 else:
     logger.info('No CloudTrail issues found')

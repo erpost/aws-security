@@ -1,10 +1,11 @@
-import boto3
 from botocore.exceptions import ClientError
 
+import boto3
+import credentials
 
 def send_email_default(SUBJECT, BODY_TEXT):
-    SENDER = '<sender email>'
-    RECIPIENT = '<recipient email>'
+    SENDER = credentials.get_sender_email()
+    RECIPIENT = credentials.get_recipient_email()
     AWS_REGION = "us-east-1"
     CHARSET = "UTF-8"
 
